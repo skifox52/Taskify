@@ -1,8 +1,11 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { AiOutlineClose, AiOutlineEdit } from "react-icons/ai"
 import { SubTask } from "./SubTask"
 import { useAutoAnimate } from "@formkit/auto-animate/react"
 import { mainTaskType } from "../types/mainTask"
+import { deleteMaintask } from "../services/MainTaskService"
+import { toast } from "react-toastify"
+import { LoaderContext } from "../context/loaderContext"
 
 interface MainTaskProps extends mainTaskType {}
 
@@ -10,6 +13,22 @@ export const MainTask: React.FC<MainTaskProps> = ({ name, subTasks, _id }) => {
   const [showInput, setShowInput] = useState<boolean>(false)
   const [showEdit, setShowEdit] = useState<boolean>(false)
   const [parent] = useAutoAnimate()
+  const loader = useContext(LoaderContext)
+
+  //Delete Main task
+  const deletTask = async (): Promise<void> => {
+    const confirmAlrt = confirm("Confirm delete?")
+    if (!confirmAlrt) return
+    loader?.setLoading(true)
+    try {
+      const deleted = await deleteMaintask(_id)
+      toast.success(deleted.message)
+    } catch (error: any) {
+      toast.error(error.message)
+    } finally {
+      loader?.setFetching(!loader.fetching)
+    }
+  }
 
   const handleShow: React.MouseEventHandler<HTMLDivElement> = () => {
     setShowInput(!showInput)
@@ -17,11 +36,18 @@ export const MainTask: React.FC<MainTaskProps> = ({ name, subTasks, _id }) => {
   const handleShowEdit: React.MouseEventHandler<HTMLDivElement> = () => {
     setShowEdit(!showEdit)
   }
+  const handleDelete: React.MouseEventHandler<HTMLDivElement> = () => {
+    deletTask()
+  }
   return (
     <div
       key={_id}
-      className="border-secondary border shadow-secondary shadow-md px-8 py-4 w-1/3 flex flex-col gap-2"
+      className="border-secondary border shadow-secondary shadow-md px-8 py-4 w-1/5 flex flex-col gap-2"
     >
+      <AiOutlineClose
+        className="mb-4 cursor-pointer  hover:text-red-600   hover:scale-125 transition-all duration-100"
+        onClick={handleDelete}
+      />
       <div
         className="w-full flex justify-between items-center h-8"
         ref={parent}

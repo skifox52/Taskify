@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { fetchMainTasks } from "../services/MainTaskService"
 import { toast } from "react-toastify"
 import { mainTaskType } from "../types/mainTask"
 import { CancelTokenSource } from "axios"
 import { MainTask } from "../components/MainTask"
+import { LoaderContext } from "../context/loaderContext"
 
 interface MianTaskPageProps {}
 
-export const MainTaskPage: React.FC<MianTaskPageProps> = ({}) => {
-  const [loading, setLoading] = useState<boolean>(true)
+export const MainTaskPage: React.FC<MianTaskPageProps> = () => {
+  const loader = useContext(LoaderContext)
   const [data, setData] = useState<mainTaskType[] | null>(null)
   const [source, setSource] = useState<CancelTokenSource | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
+      loader?.setLoading(true)
       try {
-        const { data: ResponseData, cancelTokenSource } = await fetchMainTasks<
-          mainTaskType[]
-        >()
+        const { data: ResponseData, cancelTokenSource } = await fetchMainTasks()
         setData(ResponseData)
         setSource(cancelTokenSource)
       } catch (error: any) {
         toast.error(error.message)
       } finally {
-        setLoading(false)
+        loader?.setLoading(false)
       }
     }
     fetchData()
     return () => {
       source?.cancel()
     }
-  }, [])
-  if (loading) {
+  }, [loader?.fetching])
+  if (loader?.loading) {
     return (
       <h1 className=" text-5xl text-secondary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         Loading...
@@ -45,6 +45,8 @@ export const MainTaskPage: React.FC<MianTaskPageProps> = ({}) => {
       ))}
     </div>
   ) : (
-    <h1>No data</h1>
+    <h1 className=" text-primary text-4xl text-center mt-16 font-bold">
+      No data
+    </h1>
   )
 }

@@ -1,16 +1,36 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { BiAddToQueue } from "react-icons/bi"
 import { useAutoAnimate } from "@formkit/auto-animate/react"
 import { AiOutlineClose } from "react-icons/ai"
+import { toast } from "react-toastify"
+import { postMainTask } from "../services/MainTaskService"
+import { LoaderContext } from "../context/loaderContext"
 interface AddMainProps {}
 
-export const AddMain: React.FC<AddMainProps> = ({}) => {
+export const AddMain: React.FC<AddMainProps> = () => {
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const [visible, setVisible] = useState<boolean>(false)
   const [input, setInput] = useState<string>("")
+  const loader = useContext(LoaderContext)
   //Handle Submit
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
+    if (input.length <= 3) {
+      return toast.warning("Length must be greater than 3")
+    }
+    const addTask = async (data: string): Promise<void> => {
+      loader?.setLoading(true)
+      try {
+        const newTask = await postMainTask({ name: data })
+        toast.success(newTask.message)
+      } catch (error: any) {
+        console.log(error)
+        toast.error(error.message)
+      } finally {
+        loader?.setFetching(!loader.fetching)
+      }
+    }
+    addTask(input)
     setInput("")
   }
   return (
