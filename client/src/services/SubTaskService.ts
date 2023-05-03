@@ -1,5 +1,5 @@
 import api from "./api"
-import axios, { AxiosResponse, CancelTokenSource } from "axios"
+import axios from "axios"
 import { subTaskType } from "../types/subTask"
 
 //Add new sub task
