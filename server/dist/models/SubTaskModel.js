@@ -6,8 +6,7 @@ const subTaskSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["Haute", "Normal", "Basse"],
-        required: true,
+        enum: ["High", "Medium", "Low"],
     },
 });
 const SubTaskModel = model("subtask", subTaskSchema);

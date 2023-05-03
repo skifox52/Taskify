@@ -39,7 +39,7 @@ export const MainTaskPage: React.FC<MianTaskPageProps> = () => {
     )
   }
   return data?.length ? (
-    <div className="py-8 flex flex-wrap gap-4 h-full w-full">
+    <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 h-full w-full">
       {data.map((element) => (
         <MainTask {...element} key={element._id} />
       ))}

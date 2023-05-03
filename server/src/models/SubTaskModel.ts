@@ -8,7 +8,7 @@ const subTaskSchema = new Schema<subTask>({
   },
   status: {
     type: String,
-    enum: ["Haute", "Normal", "Basse"],
+    enum: ["High", "Medium", "Low"],
     required: true,
   },
 })

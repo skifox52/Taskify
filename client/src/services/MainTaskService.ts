@@ -65,3 +65,27 @@ export const deleteMaintask = async (
     }
   }
 }
+//Put main task
+export const putMainTask = async ({
+  id,
+  data,
+}: {
+  id: string
+  data: string
+}): Promise<{ message: string }> => {
+  try {
+    const cancelTokenSource = axios.CancelToken.source()
+    await api.put(
+      `/main/${id}`,
+      { name: data },
+      { cancelToken: cancelTokenSource.token }
+    )
+    return { message: "Main task updated successfully!" }
+  } catch (error: any) {
+    if (axios.isCancel(error)) {
+      throw new Error("Request canceled!")
+    } else {
+      throw new Error(error)
+    }
+  }
+}

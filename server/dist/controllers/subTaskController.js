@@ -7,7 +7,7 @@ export const addSubTask = expressAsyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
         const { content, status } = req.body;
-        if (!content || !status) {
+        if (!content) {
             throw new Error("Empty fields!");
         }
         const newSubTask = await SubTaskModel.create({ content, status });
